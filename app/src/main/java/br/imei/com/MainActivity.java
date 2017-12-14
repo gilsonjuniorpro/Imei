@@ -3,8 +3,10 @@ package br.imei.com;
 import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -17,6 +19,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -38,10 +42,34 @@ public class MainActivity extends AppCompatActivity {
             Log.i("DeviceInfo ", "----> DeviceId 1 " + manager.getDeviceId(0) + " <----");
             Log.i("DeviceInfo ", "----> DeviceId 2 " + manager.getDeviceId(1) + " <----");
 
-            tvImeiInformation.setText("DeviceId 1 " + manager.getDeviceId(0));
+            String androidId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+            Log.i("DeviceInfo ", "----> androidId " + androidId + " <----");
+
+            tvImeiInformation.setText("androidId " + androidId);
         } else {
             requestPermission();
         }
+    }
+
+
+    private static String uniqueID = null;
+    private static final String PREF_UNIQUE_ID = "PREF_UNIQUE_ID";
+
+    public synchronized static String id(Context context) {
+        if (uniqueID == null) {
+            SharedPreferences sharedPrefs = context.getSharedPreferences(
+                    PREF_UNIQUE_ID, Context.MODE_PRIVATE);
+            uniqueID = sharedPrefs.getString(PREF_UNIQUE_ID, null);
+
+            if (uniqueID == null) {
+                uniqueID = UUID.randomUUID().toString();
+                SharedPreferences.Editor editor = sharedPrefs.edit();
+                editor.putString(PREF_UNIQUE_ID, uniqueID);
+                editor.commit();
+            }
+        }
+
+        return uniqueID;
     }
 
     private void requestPermission() {
