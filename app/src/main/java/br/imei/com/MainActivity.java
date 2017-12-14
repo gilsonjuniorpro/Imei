@@ -25,6 +25,8 @@ import java.util.UUID;
 public class MainActivity extends AppCompatActivity {
 
     private int READPHONESTATE_PERMISSION_CODE = 1;
+    private static String uniqueID = null;
+    private static final String PREF_UNIQUE_ID = "PREF_UNIQUE_ID";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,10 +52,6 @@ public class MainActivity extends AppCompatActivity {
             requestPermission();
         }
     }
-
-
-    private static String uniqueID = null;
-    private static final String PREF_UNIQUE_ID = "PREF_UNIQUE_ID";
 
     public synchronized static String id(Context context) {
         if (uniqueID == null) {
